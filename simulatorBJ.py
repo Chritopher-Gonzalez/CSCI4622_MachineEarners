@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr 12 16:15:20 2022
+
+@author: Christopher
+"""
+
 import random
 
 #TODO: remove global variables.
