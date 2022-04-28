@@ -13,7 +13,6 @@ ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
 values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 'Nine':9, 'Ten':10, 'Jack':10,
          'Queen':10, 'King':10, 'Ace':11}
 
-
 class Card:
     def __init__(self, suit, rank):
         self.suit = suit
@@ -22,13 +21,14 @@ class Card:
     def __str__(self):
         return self.rank + ' of ' + self.suit
 
-
 class Deck:
-    def __init__(self):
+    def __init__(self, numDecks=1):
         self.deck = []  # start with an empty list#
-        for suit in suits:
-            for rank in ranks:
-                self.deck.append(Card(suit, rank))
+        #allows for multiple decks
+        for i in range(numDecks):
+            for suit in suits:
+                for rank in ranks:
+                    self.deck.append(Card(suit, rank))
     
     def __str__(self):
         compDeck = '' #starting competition deck empty#
@@ -58,8 +58,7 @@ class Hand:
     def adjustForAce(self):
         while self.value > 21 and self.aces:
             self.value -= 10
-            self.aces -= 1
-   
+            self.aces -= 1  
 
 class Visualizer:
     def __init__(self, player, dealer):
@@ -78,83 +77,114 @@ class Visualizer:
         print("\nPlayer's Hand: ", *self.player.cards, sep= '\n')
         print("Player's Hand = ", self.player.value)
     
+class Game:
+    def __init__(self):
+        # Create & shuffle the deck
+        self,playing = True
+        self.deck = Deck()
+        self.deck.shuffle()
+        #initialize hands
+        self.dealer = Hand()
+        self.player = Hand() #TODO: change to allow multiple players
         
-def hit(deck,hand):
-    hand.drawCard(deck.deal())
-    hand.adjustForAce()
-    
-#GAME
-while True:
-    playing = True 
-    # Print an opening statement
-    print("Welcome to MachineEarners's Blackjack Simulator.")
-    
-    # Create & shuffle the deck, deal two cards to each player
-    deck = Deck()
-    deck.shuffle()
-    
-    player = Hand()
-    player.drawCard(deck.deal())
-    player.drawCard(deck.deal())
-    
-    dealer = Hand()
-    dealer.drawCard(deck.deal())
-    dealer.drawCard(deck.deal())
-    
-    # Show cards (but keep one dealer card hidden)
-    gui = Visualizer(player, dealer)
-    gui.displayPartial()
-    
-    while playing:  # recall this variable from our hit_or_stand function
-        x = input("Would you like to Hit or Stand? Enter 'h' or 's'")
-        
-        if x[0].lower() == 'h':
-            hit(deck, player)  # hit() function defined above
+    def start(self):
+        #draw first card
+        self.player.drawCard(self.deck.deal())
+        self.dealer.drawCard(self.deck.deal())
 
-        elif x[0].lower() == 's':
-            print("Player stands. Dealer is playing.")
-            playing = False
-
-        else:
-            print("Sorry, please try again.")
-            continue
+        #draw second card
+        self.player.drawCard(self.deck.deal())
+        self.dealer.drawCard(self.deck.deal())
         
-        # Show cards (but keep one dealer card hidden)
-        gui.displayPartial()
+    def hit(self):
+        self.player.drawCard(self.deck.deal())
+        self.player.adjustForAce()
         
-        # If player's hand exceeds 21, run player_busts() and break out of loop
-        if player.value >21:
-            print("Player busts!")
-            break
-
-    # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
-    if player.value <= 21:
-        
-        while dealer.value <17:
-            hit(deck, dealer)
+    def stand(self):
+        return False
     
-        # Show all cards
-        gui.displayAll()
+    def validator(self):
         
-        # Run different winning scenarios
-        if dealer.value > 21:
-            print("Dealer busts!")
-
-        elif dealer.value > player.value:
-            print("Dealer wins!")
-
-        elif dealer.value < player.value:
-             print("Player wins!")
-
-        else:
-            print("Dealer and Player tie! It's a push.") 
+        if player.value <= 21:
+         
+         while dealer.value <17:
+             hit(deck, dealer)
+     
+         # Show all cards
+         gui.displayAll()
+         
+         # Run different winning scenarios
+         if dealer.value > 21:
+             print("Dealer busts!")
+ 
+         elif dealer.value > player.value:
+             print("Dealer wins!")
+ 
+         elif dealer.value < player.value:
+              print("Player wins!")
+ 
+         else:
+             print("Dealer and Player tie! It's a push.") 
         
-    # Ask to play again
-    new_game = input("would you like to play again? Enter 'y' or 'n'")
-    if new_game[0].lower() == 'y':
-        playing = True
-        continue
+rounds = 10 #number of round to simulate
+
+for r in range(rounds):
+    game = Game()
+    game.start() #deals two cards to all players
+    #TODO store players initial totals
+    #TODO player action
+    if r < rounds/2:
+        game.hit()
     else:
-        print('Thanks for playing! ')
+        game.stand()
 
-        break
+    #TODO winner validator
+    print(r)
+
+# =============================================================================
+# while True:
+#     
+#     while playing:  # recall this variable from our hit_or_stand function
+#         x = input("Would you like to Hit or Stand? Enter 'h' or 's'")
+#         
+#         if x[0].lower() == 'h':
+#             hit(deck, player)  # hit() function defined above
+# 
+#         elif x[0].lower() == 's':
+#             print("Player stands. Dealer is playing.")
+#             playing = False
+# 
+#         else:
+#             print("Sorry, please try again.")
+#             continue
+#         
+#         # Show cards (but keep one dealer card hidden)
+#         gui.displayPartial()
+#         
+#         # If player's hand exceeds 21, run player_busts() and break out of loop
+#         if player.value >21:
+#             print("Player busts!")
+#             break
+# 
+#     # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
+#     if player.value <= 21:
+#         
+#         while dealer.value <17:
+#             hit(deck, dealer)
+#     
+#         # Show all cards
+#         gui.displayAll()
+#         
+#         # Run different winning scenarios
+#         if dealer.value > 21:
+#             print("Dealer busts!")
+# 
+#         elif dealer.value > player.value:
+#             print("Dealer wins!")
+# 
+#         elif dealer.value < player.value:
+#              print("Player wins!")
+# 
+#         else:
+#             print("Dealer and Player tie! It's a push.") 
+# =============================================================================
