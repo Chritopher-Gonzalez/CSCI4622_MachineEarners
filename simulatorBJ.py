@@ -86,6 +86,7 @@ class Game:
         #initialize hands
         self.dealer = Hand()
         self.player = Hand() #TODO: change to allow multiple players
+        self.actions = 0
         
     def start(self):
         #draw first card
@@ -96,35 +97,51 @@ class Game:
         self.player.drawCard(self.deck.deal())
         self.dealer.drawCard(self.deck.deal())
         
-    def hit(self):
-        self.player.drawCard(self.deck.deal())
-        self.player.adjustForAce()
+    def hit(self, player):
+        if player == True:
+            self.player.drawCard(self.deck.deal())
+            self.player.adjustForAce()
+        else:
+            self.dealer.drawCard(self.deck.deal())
+            self.dealer.adjustForAce()
         
     def stand(self):
-        return False
+        self,playing = False
     
-    def validator(self):
+    def updateActions(self):
+        self.actions =+ 1
+    
+    def playGame(self, action):
+        if self.dealer.value == 21:
+            if self.player.value == 21:
+                return 0 #push scenario game ended in a tie
+            else:
+                return -1 #player lost due to action 
+        else:
+            if action:
+                self.hit(player=True)
+                self.updateActions()
+            else:
+                self.stand()
+                
+            if self.player.value > 21:
+                return -1 #player lost due to action 
+
+        while self.dealer.value <17:
+            self.hit(player=False)
+         
+        # Run different winning scenarios
+        if self.dealer.value > 21:
+            return 1 #player won due to action 
         
-        if player.value <= 21:
-         
-         while dealer.value <17:
-             hit(deck, dealer)
-     
-         # Show all cards
-         gui.displayAll()
-         
-         # Run different winning scenarios
-         if dealer.value > 21:
-             print("Dealer busts!")
- 
-         elif dealer.value > player.value:
-             print("Dealer wins!")
- 
-         elif dealer.value < player.value:
-              print("Player wins!")
- 
-         else:
-             print("Dealer and Player tie! It's a push.") 
+        elif self.dealer.value > self.player.value:
+            return -1 #player lost due to action 
+        
+        elif self.dealer.value < self.player.value:
+             return 1 #player won due to action 
+             
+        else:
+            return 0 #push scenario game ended in a tie
         
 rounds = 10 #number of round to simulate
 
@@ -133,58 +150,14 @@ for r in range(rounds):
     game.start() #deals two cards to all players
     #TODO store players initial totals
     #TODO player action
+    action = None
     if r < rounds/2:
-        game.hit()
+        #play with a hit
+        action = True
     else:
-        game.stand()
+        #play with a stand
+        action = False
 
-    #TODO winner validator
-    print(r)
-
-# =============================================================================
-# while True:
-#     
-#     while playing:  # recall this variable from our hit_or_stand function
-#         x = input("Would you like to Hit or Stand? Enter 'h' or 's'")
-#         
-#         if x[0].lower() == 'h':
-#             hit(deck, player)  # hit() function defined above
-# 
-#         elif x[0].lower() == 's':
-#             print("Player stands. Dealer is playing.")
-#             playing = False
-# 
-#         else:
-#             print("Sorry, please try again.")
-#             continue
-#         
-#         # Show cards (but keep one dealer card hidden)
-#         gui.displayPartial()
-#         
-#         # If player's hand exceeds 21, run player_busts() and break out of loop
-#         if player.value >21:
-#             print("Player busts!")
-#             break
-# 
-#     # If Player hasn't busted, play Dealer's hand until Dealer reaches 17
-#     if player.value <= 21:
-#         
-#         while dealer.value <17:
-#             hit(deck, dealer)
-#     
-#         # Show all cards
-#         gui.displayAll()
-#         
-#         # Run different winning scenarios
-#         if dealer.value > 21:
-#             print("Dealer busts!")
-# 
-#         elif dealer.value > player.value:
-#             print("Dealer wins!")
-# 
-#         elif dealer.value < player.value:
-#              print("Player wins!")
-# 
-#         else:
-#             print("Dealer and Player tie! It's a push.") 
-# =============================================================================
+    results = game.playGame(action)
+    #TODO: ignore 0 results
+    
