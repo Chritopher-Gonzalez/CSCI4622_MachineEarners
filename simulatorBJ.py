@@ -6,6 +6,7 @@ Created on Tue Apr 12 16:15:20 2022
 """
 
 import random
+import numpy as np
 
 #TODO: remove global variables.
 suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
@@ -60,6 +61,15 @@ class Hand:
             self.value -= 10
             self.aces -= 1  
 
+    def getValue(self):
+        return self.value
+
+    def getHasAces(self):
+        if(self.aces >= 1):
+            return True
+        else:
+            return False
+
 class Visualizer:
     def __init__(self, player, dealer):
         self.player = player
@@ -80,14 +90,25 @@ class Visualizer:
 class Game:
     def __init__(self):
         # Create & shuffle the deck
-        self,playing = True
+        self.playing = True
         self.deck = Deck()
         self.deck.shuffle()
         #initialize hands
         self.dealer = Hand()
         self.player = Hand() #TODO: change to allow multiple players
         self.actions = 0
-        
+
+        # data
+        self.isSoft = 0
+        self.playerValue = 0
+        self.shownDealerCard = 0
+        self.shownCardIsAce = 0
+        self.outcome = 0 # 1 for player wins, -1 for player loses, 0 for push
+        self.dealerValue = 0 # just used for testing
+        self.action = 0
+        self.drawnCard = 0
+        self.dealerFinalVal = 0
+
     def start(self):
         #draw first card
         self.player.drawCard(self.deck.deal())
@@ -96,6 +117,20 @@ class Game:
         #draw second card
         self.player.drawCard(self.deck.deal())
         self.dealer.drawCard(self.deck.deal())
+
+        # player data
+        self.playerValue = self.player.getValue()
+        if(self.player.cards[0].rank == "Ace" or self.player.cards[1].rank == "Ace"):
+            self.isSoft = 1
+
+        # dealer data
+        self.shownDealerCard = values[self.dealer.cards[1].rank]
+        if(self.shownDealerCard == 11):
+            self.shownCardIsAce = 1
+
+        self.dealerValue = self.dealer.getValue()
+        
+
         
     def hit(self, player):
         if player == True:
@@ -106,12 +141,15 @@ class Game:
             self.dealer.adjustForAce()
         
     def stand(self):
-        self,playing = False
+        self.playing = False
     
     def updateActions(self):
         self.actions =+ 1
     
     def playGame(self, action):
+        if(action):
+            self.action = 1
+
         if self.dealer.value == 21:
             if self.player.value == 21:
                 return 0 #push scenario game ended in a tie
@@ -121,29 +159,52 @@ class Game:
             if action:
                 self.hit(player=True)
                 self.updateActions()
+                self.drawnCard = values[self.player.cards[-1].rank]
+
             else:
                 self.stand()
                 
             if self.player.value > 21:
-                return -1 #player lost due to action 
+                return -1
+                #player lost due to action 
 
         while self.dealer.value <17:
             self.hit(player=False)
+
+        self.dealerFinalVal = self.dealer.value
          
         # Run different winning scenarios
         if self.dealer.value > 21:
-            return 1 #player won due to action 
+            return 1
+            #player won due to action 
         
         elif self.dealer.value > self.player.value:
-            return -1 #player lost due to action 
+            return -1
+            #player lost due to action 
         
         elif self.dealer.value < self.player.value:
-             return 1 #player won due to action 
+            return 1
+            #player won due to action 
              
         else:
-            return 0 #push scenario game ended in a tie
+            return 0
+            #push scenario game ended in a tie
+
+    def getData(self):
+        # return np.array([self.isSoft, self.playerValue, self.drawnCard, self.shownCardIsAce, self.shownDealerCard, self.dealerValue, self.dealerFinalVal])
+
+        return np.array([self.isSoft, self.playerValue, self.shownCardIsAce, self.shownDealerCard])
         
 rounds = 10 #number of round to simulate
+
+# this plays a single game to determine how many features the game outputs. if we modify the code to add new features,
+# we will not have to modify this code
+testGame = Game()
+testGame.start()
+numFeatures = len(testGame.getData())
+
+X = np.zeros((rounds, numFeatures))
+y = np.zeros((rounds, 1))
 
 for r in range(rounds):
     game = Game()
@@ -158,6 +219,27 @@ for r in range(rounds):
         #play with a stand
         action = False
 
-    results = game.playGame(action)
+    outcome = game.playGame(action)
+
+    X[r] = game.getData()
+    y[r]= outcome
+    
     #TODO: ignore 0 results
+
+np.save("X.npy", X)
+np.save("y.npy", y)
+
+# to load:
+
+# X = np.load("X.npy")
+# y = np.load("y.npy")
+
+
+# ===============
+
+#print(X)
+#print(y)
+
+#print("outcome, isSoft, pVal, pDrawnCard, isAce, shownCard, dStartValue, dFinalVal")
+#print(np.concatenate((y,X), axis = 1))
     
