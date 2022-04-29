@@ -193,7 +193,7 @@ class Game:
     def getData(self):
         # return np.array([self.isSoft, self.playerValue, self.drawnCard, self.shownCardIsAce, self.shownDealerCard, self.dealerValue, self.dealerFinalVal])
 
-        return np.array([self.isSoft, self.playerValue, self.shownCardIsAce, self.shownDealerCard])
+        return np.array([self.isSoft, self.playerValue, self.action, self.shownCardIsAce, self.shownDealerCard])
         
 rounds = 10 #number of round to simulate
 
@@ -225,6 +225,8 @@ for r in range(rounds):
     y[r]= outcome
     
     #TODO: ignore 0 results
+
+print(X)
 
 np.save("X.npy", X)
 np.save("y.npy", y)
