@@ -1,7 +1,7 @@
 import sklearn.metrics as metrics
 from keras.models import Sequential
 import numpy as np
-from keras.layers import Dense, LSTM, Flatten, Dropout
+from keras.layers import Dense, LSTM, Flatten, Dropout, InputLayer
 
 train_X = np.load("X.npy")
 train_y = np.load("y.npy").reshape(-1,1)
@@ -11,13 +11,15 @@ train_y = np.load("y.npy").reshape(-1,1)
 
 # Set up a neural net with 5 layers
 model = Sequential()
+model.add(InputLayer(input_shape=(4,)))
 model.add(Dense(16))
 model.add(Dense(128))
 model.add(Dense(32))
 model.add(Dense(8))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='sgd', metrics=["accuracy"])
-model.fit(train_X, train_y, epochs=4, batch_size=256, verbose=1)
+model.fit(train_X, train_y, epochs=20, batch_size=256, verbose=1)
+model.save("model")
 
 prediction = np.rint(model.predict(train_X))
 print((prediction))
