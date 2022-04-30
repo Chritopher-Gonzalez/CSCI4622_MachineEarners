@@ -11,7 +11,7 @@ train_y = np.load("y.npy").reshape(-1,1)
 
 # Set up a neural net with 5 layers
 model = Sequential()
-model.add(InputLayer(input_shape=(4,)))
+model.add(InputLayer(input_shape=(train_X.shape[1],)))
 model.add(Dense(16))
 model.add(Dense(128))
 model.add(Dense(32))

@@ -4,14 +4,14 @@ Created on Tue Apr 12 16:15:20 2022
 
 @author: Christopher
 """
-from abstractBJ import Game
+from abstractCountingBJ import Game
 import numpy as np
 
 rounds = 50000 #number of round to simulate
 
 # this plays a single game to determine how many features the game outputs. if we modify the code to add new features,
 # we will not have to modify this code
-testGame = Game()
+testGame = Game(removeSubset=True)
 testGame.start()
 numFeatures = len(testGame.getData())
 
@@ -19,7 +19,7 @@ X = np.zeros((rounds, numFeatures))
 y = np.zeros((rounds, 1))
 
 for r in range(rounds):
-    game = Game()
+    game = Game(removeSubset=True)
     game.start() #deals two cards to all players
     #TODO store players initial totals
     #TODO player action
@@ -36,17 +36,14 @@ for r in range(rounds):
     X[r] = game.getData()
     y[r]= outcome
 
-#print(X)
-#X = np.append(X, y, axis=1)
+
 np.save("X.npy", X)
 
-lose = []
-for i in y:
-    if i == -1:
-        lose.append(1)
+for i in range(len(y)):
+    if(y[i] == -1):
+        y[i] = 1
     else:
-        lose.append(0)
-y = np.array(lose)
+        y[i] = 0
 
 np.save("y.npy", y)
 
@@ -57,10 +54,4 @@ np.save("y.npy", y)
 # y = np.load("y.npy")
 
 
-# ===============
 
-#print(X)
-#print(y)
-
-#print("outcome, isSoft, pVal, pDrawnCard, isAce, shownCard, dStartValue, dFinalVal")
-#print(np.concatenate((y,X), axis = 1))
