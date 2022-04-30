@@ -4,14 +4,14 @@ Created on Tue Apr 12 16:15:20 2022
 
 @author: Christopher
 """
-from abstractCountingBJ import Game
+from abstractBJ import Game
 import numpy as np
 
 rounds = 50000 #number of round to simulate
 
 # this plays a single game to determine how many features the game outputs. if we modify the code to add new features,
 # we will not have to modify this code
-testGame = Game(removeSubset=True)
+testGame = Game()
 testGame.start()
 numFeatures = len(testGame.getData())
 
@@ -19,7 +19,7 @@ X = np.zeros((rounds, numFeatures))
 y = np.zeros((rounds, 1))
 
 for r in range(rounds):
-    game = Game(removeSubset=True)
+    game = Game()
     game.start() #deals two cards to all players
     #TODO store players initial totals
     #TODO player action
