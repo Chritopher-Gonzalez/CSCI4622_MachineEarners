@@ -7,7 +7,7 @@ Created on Tue Apr 12 16:15:20 2022
 from abstractCountingBJ import Game
 import numpy as np
 
-rounds = 50000 #number of round to simulate
+rounds = 100000 #number of round to simulate
 
 # this plays a single game to determine how many features the game outputs. if we modify the code to add new features,
 # we will not have to modify this code
