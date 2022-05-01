@@ -186,4 +186,4 @@ class Game:
     def getData(self):
         # return np.array([self.isSoft, self.playerValue, self.drawnCard, self.shownCardIsAce, self.shownDealerCard, self.dealerValue, self.dealerFinalVal])
 
-        return np.array([self.isSoft, self.playerValue, self.shownCardIsAce, self.shownDealerCard])
+        return np.array([self.action, self.isSoft, self.playerValue, self.shownCardIsAce, self.shownDealerCard])

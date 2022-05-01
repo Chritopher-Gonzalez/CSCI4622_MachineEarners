@@ -5,6 +5,8 @@ from keras.layers import Dense, LSTM, Flatten, Dropout, InputLayer
 import tensorflow as tf
 import numpy as np
 
+exec(open("simulatorBJ.py").read())
+
 train_X = np.load("X.npy")
 train_y = np.load("y.npy").reshape(-1,1)
 #TODO: Load Data
