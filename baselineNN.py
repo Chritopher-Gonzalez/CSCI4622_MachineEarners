@@ -4,6 +4,8 @@ from keras.models import Sequential
 from keras.layers import Dense, LSTM, Flatten, Dropout, InputLayer
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 exec(open("simulatorBJ.py").read())
 
@@ -23,7 +25,7 @@ model.add(Dense(1, activation='sigmoid'))
 
 model.compile(
     loss='binary_crossentropy',
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.1),
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
     metrics=["accuracy"]
 )
 
@@ -44,6 +46,18 @@ early = tf.keras.callbacks.EarlyStopping(
     verbose=1,
     mode='max'
 )
-
-model.fit(train_X, train_y, epochs=30, batch_size=256, verbose=1, callbacks=[checkpoint_callbk, early])
+model.fit(train_X, train_y, epochs=20, batch_size=256, verbose=1, callbacks=[checkpoint_callbk, early])
 model.save("model")
+"""
+history = model.fit(train_X, train_y, epochs=20, batch_size=256, verbose=1, callbacks=[checkpoint_callbk, early])
+# list all data in history
+print(history.history.keys())
+# summarize history for accuracy
+print(type(history.history['accuracy']))
+plt.plot(history.history['accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train'], loc='upper left')
+plt.show()
+"""

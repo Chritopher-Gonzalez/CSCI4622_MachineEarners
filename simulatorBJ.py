@@ -34,24 +34,31 @@ for r in range(rounds):
     outcome = game.playGame(action)
 
     X[r] = game.getData()
-    y[r]= outcome
 
+    if outcome  == -1:
+        y[r]= 1
+    else:
+        y[r]= 0
 
 np.save("X.npy", X)
 
-for i in range(len(y)):
-    if(y[i] == -1):
-        y[i] = 1
+correct = []
+for i, val in enumerate(y):
+    if val == 1:
+        if X[i, 0] == 1:
+            correct.append(0)
+        else:
+            correct.append(1)
     else:
-        y[i] = 0
+        if X[i, 0] == 1:
+            correct.append(1)
+        else:
+            correct.append(0)
 
-np.save("y.npy", y)
+np.save("y.npy", correct)
 
 
 # to load:
 
 # X = np.load("X.npy")
 # y = np.load("y.npy")
-
-
-
