@@ -15,7 +15,7 @@ def model_decision(input_array):
     else:
         return 0
 """
-rounds = 100 #number of round to simulate
+rounds = 1000 #number of round to simulate
 
 # this plays a single game to determine how many features the game outputs. if we modify the code to add new features,
 # we will not have to modify this code

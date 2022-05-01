@@ -15,10 +15,10 @@ train_y = np.load("y.npy").reshape(-1,1)
 
 # Set up a neural net with 5 layers
 model = Sequential()
-model.add(Dense(16))
-model.add(Dense(128))
-model.add(Dense(32))
-model.add(Dense(8))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(8, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(
