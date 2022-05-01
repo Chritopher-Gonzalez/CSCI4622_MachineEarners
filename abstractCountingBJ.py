@@ -210,8 +210,6 @@ class Game:
 
     def getData(self):
         # return np.array([self.isSoft, self.playerValue, self.drawnCard, self.shownCardIsAce, self.shownDealerCard, self.dealerValue, self.dealerFinalVal])
-        data1 = np.array([self.isSoft, self.playerValue, self.shownCardIsAce, self.shownDealerCard])
+        data1 = np.array([self.playerValue,  self.shownDealerCard, self.isSoft, self.shownCardIsAce, self.action])
 
         return np.concatenate((data1, self.deckComposition))
-
-
